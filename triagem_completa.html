@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -867,6 +868,71 @@
   }
   .card-micro-kpi.kpi-destaque-semelhantes .kpi-valor {
     color: #a16207;
+  }
+
+  /* Área de Upload e Drag-and-Drop do Arquivo .txt */
+  .area-upload-dropzone {
+    border: 2px dashed #94a3b8;
+    border-radius: 12px;
+    padding: 36px 24px;
+    text-align: center;
+    margin-bottom: 16px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .area-upload-dropzone:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+  .area-upload-dropzone.drag-over {
+    border-color: #1d4ed8;
+    background: #dbeafe;
+    border-style: solid;
+    transform: scale(1.008);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+  }
+  .area-upload-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .area-upload-icone {
+    font-size: 40px;
+    line-height: 1;
+  }
+  .area-upload-titulo {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .area-upload-subtitulo {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+  .btn-escolher-arquivo {
+    background: #1e3a8a;
+    color: #ffffff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .btn-escolher-arquivo:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+  }
+  .btn-escolher-arquivo:active {
+    transform: translateY(0);
   }
   </style>
 </head>
@@ -2367,22 +2433,17 @@ function sanitizarProcessoLGPD(registroBruto) {
  * Gerador de Bookmarklet Universal do PJe:
  * - Sem hardcode de tribunal (opera dinamicamente sobre location.origin do PJe);
  * - Agrupamento nacional padronizado (12 = Triagem);
- * - Sanitiza??o estrita de dados sens?veis na fonte (LGPD: remove CPFs e e-mails);
- * - Envia via postMessage para a janela do aplicativo web aberto (targetAppUrl);
- * - Baixa c?pia de seguran?a em formato .txt/.ndjson como fallback.
+ * - Sanitização estrita de dados sensíveis na fonte (LGPD: remove CPFs e e-mails);
+ * - Baixa automaticamente o arquivo .txt com os processos sanitizados para carregar no app.
  * 
- * @param {string} targetAppUrl - URL da aplica??o web receptora
- * @returns {string} C?digo javascript:... pronto para favoritos
+ * @returns {string} Código javascript:... pronto para favoritos
  */
-function gerarCodigoBookmarkletUniversal(targetAppUrl) {
-  const urlAppSegura = (targetAppUrl || (typeof window !== 'undefined' ? window.location.href : '')).split('#')[0];
-
+function gerarCodigoBookmarkletUniversal() {
   const fnCorpo = `(function () {
   var AGRUPAMENTO = 12;
   var TAMANHO_PAGINA = 500;
   var CONCORRENCIA = 5;
   var API_BASE = location.origin + '/pje-comum-api/api';
-  var APP_URL = ${JSON.stringify(urlAppSegura)};
 
   function getCookie(name) {
     var cookies = document.cookie.split(';');
@@ -2458,7 +2519,7 @@ function gerarCodigoBookmarkletUniversal(targetAppUrl) {
   }
 
   function baixarArquivoTxt(nomeArquivo, linhas) {
-    var texto = linhas.map(function (o) { return JSON.stringify(o); }).join('\n') + '\n';
+    var texto = linhas.map(function (o) { return JSON.stringify(o); }).join('\\n') + '\\n';
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([texto], { type: 'text/plain;charset=utf-8' }));
     a.download = nomeArquivo;
@@ -2528,7 +2589,7 @@ function gerarCodigoBookmarkletUniversal(targetAppUrl) {
     var aviso = criarAviso();
     try {
       var xsrf = getCookie('Xsrf-Token');
-      if (!xsrf) throw new Error('Cookie de sess?o Xsrf-Token n?o encontrado. Verifique se est? logado no PJe nesta aba.');
+      if (!xsrf) throw new Error('Cookie de sessão Xsrf-Token não encontrado. Verifique se está logado no PJe nesta aba.');
 
       atualizarStatus(aviso, 'Buscando tarefas do agrupamento de triagem...', 10);
       var pagina = 1;
@@ -2581,24 +2642,12 @@ function gerarCodigoBookmarkletUniversal(targetAppUrl) {
 
       var outValidos = out.filter(Boolean);
       var hoje = new Date().toISOString().slice(0, 10);
+      var nomeArquivo = 'triagem_pje_' + hoje + '.txt';
 
-      // 1. Tenta envio direto para o Web App via postMessage
-      var appWin = null;
-      try {
-        appWin = window.open(APP_URL, 'triagem_pje_app');
-        if (appWin) {
-          setTimeout(function () {
-            appWin.postMessage({ tipo: 'TRIAGEM_PAYLOAD', dados: outValidos }, '*');
-          }, 800);
-        }
-      } catch (errPost) {
-        console.warn('Erro ao direcionar para janela do app:', errPost);
-      }
+      // Download direto do arquivo .txt contendo os processos sanitizados
+      baixarArquivoTxt(nomeArquivo, outValidos);
 
-      // 2. Download de cópia de segurança em .txt
-      baixarArquivoTxt('triagem_pje_' + hoje + '.txt', outValidos);
-
-      atualizarStatus(aviso, '✅ Concluído! ' + outValidos.length + ' processos enviados para a Triagem PJe.', 100);
+      atualizarStatus(aviso, '✅ Concluído! ' + outValidos.length + ' processos exportados. O arquivo ' + nomeArquivo + ' foi baixado.', 100);
       setTimeout(function () {
         if (aviso && aviso.parentNode) aviso.parentNode.removeChild(aviso);
       }, 7000);
@@ -3495,7 +3544,7 @@ function renderizarBarraMetricas(container, estatisticas, clustersSeriais) {
 function renderizarCardTutorialBookmarklet(container) {
   if (!container) return;
 
-  const urlBookmarklet = gerarCodigoBookmarkletUniversal(window.location.href);
+  const urlBookmarklet = gerarCodigoBookmarkletUniversal();
   const CHAVE_STORAGE = 'triagem_tutorial_bookmarklet_recolhido';
   const estaRecolhidoInicial = localStorage.getItem(CHAVE_STORAGE) === 'true';
 
@@ -3506,7 +3555,7 @@ function renderizarCardTutorialBookmarklet(container) {
           <span class="sanfona-icone">⚡</span>
           <div>
             <div class="sanfona-titulo">Como Coletar Processos do PJe (Bookmarklet Automático)</div>
-            <div class="sanfona-subtitulo">Guia simples em 3 passos para importar processos diretamente de qualquer tribunal</div>
+            <div class="sanfona-subtitulo">Guia simples em 3 passos para exportar os processos do tribunal e analisar aqui</div>
           </div>
         </div>
         <span id="icone-seta-sanfona" class="sanfona-seta">${estaRecolhidoInicial ? '▼' : '▲'}</span>
@@ -3538,25 +3587,25 @@ function renderizarCardTutorialBookmarklet(container) {
           <!-- Passo 2 -->
           <div class="card-passo">
             <div class="passo-numero">Passo 2</div>
-            <div class="passo-titulo">Abra o PJe no seu Tribunal</div>
+            <div class="passo-titulo">Execute no PJe</div>
             <p class="passo-desc">
-              Acesse o <strong>PJe</strong> do seu tribunal (qualquer TRT) e abra o painel de tarefas de <strong>Triagem</strong> (Agrupamento 12).
+              No <strong>PJe</strong> (qualquer TRT), abra a tarefa de <strong>Triagem</strong> (Agrupamento 12) e clique no favorito <strong>"⭐ Coletar Triagem PJe"</strong>.
             </p>
-            <div class="passo-dica" style="border-left-color: #eab308; background: #fefce8; color: #854d0e;">
-              ⚠️ <strong>Importante:</strong> Mantenha <strong>esta aba da Triagem aberta</strong> ao lado para receber os dados automaticamente.
+            <div class="passo-dica" style="border-left-color: #0284c7; background: #f0f9ff; color: #0369a1;">
+              📥 O robô coletará os processos com sanitização LGPD e baixará automaticamente o arquivo <code>triagem_pje_DATA.txt</code>.
             </div>
           </div>
 
           <!-- Passo 3 -->
           <div class="card-passo">
             <div class="passo-numero">Passo 3</div>
-            <div class="passo-titulo">Clique no Favorito</div>
+            <div class="passo-titulo">Carregue o Arquivo Aqui</div>
             <p class="passo-desc">
-              Dentro da aba do PJe, clique no favorito <strong>"⭐ Coletar Triagem PJe"</strong> que você salvou.
+              Arraste o arquivo <code>.txt</code> baixado para a caixa de upload abaixo ou clique em <strong>"Selecionar Arquivo .txt"</strong>.
             </p>
-            <p class="passo-desc" style="font-size:11px;color:#64748b;">
-              O robô coletará os processos com sanitização de dados sensíveis e enviará tudo para cá em tempo real (além de baixar um arquivo .txt como cópia de segurança).
-            </p>
+            <div class="passo-dica" style="border-left-color: #16a34a; background: #f0fdf4; color: #15803d;">
+              ⚡ A análise, filtros, identificação de Fazenda Pública e relatórios serão carregados instantaneamente!
+            </div>
           </div>
         </div>
       </div>
@@ -4455,7 +4504,6 @@ function renderizarAvisoPrivacidade(container, onLimparSessao) {
 
 
 
-
 /**
  * Ponto de entrada da aplicação de interface de triagem.
  */
@@ -4470,10 +4518,12 @@ async function iniciarAppTriagem(containerPrincipal) {
           <button type="button" id="btn-instalar-pwa" class="btn-instalar-app" style="display:none;" title="Instalar como aplicativo no computador">
             📲 Instalar App
           </button>
+          <button type="button" id="btn-carregar-novo" style="display:none;background:#334155;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;" title="Carregar um novo arquivo .txt">
+            📥 Carregar Outro Arquivo .txt
+          </button>
           <button type="button" id="btn-exportar-pdf" style="display:none;background:#1e3a8a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">
             Exportar Relatório (PDF)
           </button>
-          <div id="status-conexao" style="font-size:12px;color:#16a34a;font-weight:600;">Receptor Ativo</div>
         </div>
       </div>
     </header>
@@ -4481,10 +4531,17 @@ async function iniciarAppTriagem(containerPrincipal) {
     <!-- Card Sanfona Retrátil Didático: Como Coletar Processos do PJe -->
     <div id="container-tutorial-bookmarklet"></div>
 
-    <div id="area-upload" style="border:2px dashed #cbd5e1;border-radius:8px;padding:24px;text-align:center;margin-bottom:16px;background:#f8fafc;cursor:pointer;">
-      <p style="margin:0;font-size:13px;color:#475569;">
-        <strong>Arraste e solte o arquivo .txt da triagem aqui</strong> ou clique para selecionar.
-      </p>
+    <div id="area-upload" class="area-upload-dropzone">
+      <div class="area-upload-conteudo">
+        <span class="area-upload-icone">📥</span>
+        <div class="area-upload-texto">
+          <div class="area-upload-titulo">Arraste e solte o arquivo <code>.txt</code> da triagem aqui</div>
+          <div class="area-upload-subtitulo">Ou clique no botão abaixo para selecionar do seu computador</div>
+        </div>
+        <button type="button" id="btn-escolher-arquivo" class="btn-escolher-arquivo">
+          📁 Selecionar Arquivo .txt
+        </button>
+      </div>
       <input type="file" id="input-arquivo" accept=".txt,.json,.ndjson" style="display:none;">
     </div>
 
@@ -4529,6 +4586,8 @@ async function iniciarAppTriagem(containerPrincipal) {
   const containerPrivacidade = containerPrincipal.querySelector('#container-privacidade');
   const areaUpload = containerPrincipal.querySelector('#area-upload');
   const inputArquivo = containerPrincipal.querySelector('#input-arquivo');
+  const btnEscolherArquivo = containerPrincipal.querySelector('#btn-escolher-arquivo');
+  const btnCarregarNovo = containerPrincipal.querySelector('#btn-carregar-novo');
 
   const btnInstalarPwa = containerPrincipal.querySelector('#btn-instalar-pwa');
   const btnExportarPdf = containerPrincipal.querySelector('#btn-exportar-pdf');
@@ -4653,9 +4712,11 @@ async function iniciarAppTriagem(containerPrincipal) {
     if (processos.length > 0) {
       areaUpload.style.display = 'none';
       if (btnExportarPdf) btnExportarPdf.style.display = 'inline-block';
+      if (btnCarregarNovo) btnCarregarNovo.style.display = 'inline-block';
     } else {
       areaUpload.style.display = 'block';
       if (btnExportarPdf) btnExportarPdf.style.display = 'none';
+      if (btnCarregarNovo) btnCarregarNovo.style.display = 'none';
     }
   }
 
@@ -4671,28 +4732,89 @@ async function iniciarAppTriagem(containerPrincipal) {
     atualizarVisualizacao([]);
   }
 
-  // 2. Conecta receptor de postMessage
-  iniciarReceptorPostMessage((novosDados) => {
-    atualizarVisualizacao(novosDados);
+  // 2. Upload de Arquivo .txt (Botão de Seleção, Clique na Área e Drag & Drop Completo)
+  function abrirSeletorArquivo() {
+    inputArquivo.value = '';
+    inputArquivo.click();
+  }
+
+  if (btnEscolherArquivo) {
+    btnEscolherArquivo.addEventListener('click', (e) => {
+      e.stopPropagation();
+      abrirSeletorArquivo();
+    });
+  }
+
+  if (btnCarregarNovo) {
+    btnCarregarNovo.addEventListener('click', () => {
+      abrirSeletorArquivo();
+    });
+  }
+
+  areaUpload.addEventListener('click', () => {
+    abrirSeletorArquivo();
   });
 
-  // 3. Suporte a Upload Manual (.txt / .ndjson)
-  areaUpload.addEventListener('click', () => inputArquivo.click());
+  // Drag and drop completo com feedback visual
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    areaUpload.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      areaUpload.classList.add('drag-over');
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'copy';
+      }
+    });
+  });
+
+  ['dragleave', 'dragend'].forEach((eventName) => {
+    areaUpload.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      areaUpload.classList.remove('drag-over');
+    });
+  });
+
+  areaUpload.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    areaUpload.classList.remove('drag-over');
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length > 0) {
+      processarArquivo(dt.files[0]);
+    }
+  });
+
+  // Previne que soltar o arquivo fora do container abra o arquivo no navegador
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('drop', (e) => e.preventDefault());
+
   inputArquivo.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
+    if (file) {
+      processarArquivo(file);
+    }
+  });
+
+  async function processarArquivo(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const texto = ev.target.result;
-      const linhas = texto.split('\n').filter(Boolean);
+      if (!texto || typeof texto !== 'string') return;
+      const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean);
       const lista = [];
       for (const l of linhas) {
         try {
           const obj = JSON.parse(l);
           if (!obj.erro) lista.push(obj);
         } catch {
-          continue;
+          // Ignora linhas que não forem JSON
         }
+      }
+      if (lista.length === 0) {
+        alert('Nenhum processo válido encontrado no arquivo selecionado. Certifique-se de selecionar o arquivo .txt gerado pelo bookmarklet da Triagem PJe.');
+        return;
       }
       try {
         await salvarLote(lista);
@@ -4702,7 +4824,7 @@ async function iniciarAppTriagem(containerPrincipal) {
       atualizarVisualizacao(lista);
     };
     reader.readAsText(file, 'utf-8');
-  });
+  }
 
   // 4. Suporte a PWA (Instalação e Service Worker Offline)
   let promptInstalacao = null;
