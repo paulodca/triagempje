@@ -1,0 +1,18 @@
+{
+  "name": "Triagem PJe ? 2? Grau",
+  "short_name": "Triagem PJe",
+  "description": "Ferramenta modular de triagem pr?via, agrupamentos negociais e conformidade processual do PJe.",
+  "start_url": "./triagem_completa.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a8a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
