@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triagem PJe — 2º Grau TRT-2</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="./css/tabulator_simple.min.css">
+  <link rel="stylesheet" href="./src/ui/estilos.css">
+</head>
+<body style="margin:0;padding:16px 20px;background:var(--bg-canvas, #f8fafc);font-family:system-ui,-apple-system,sans-serif;color:var(--text-primary, #0f172a);">
+  <div id="app" style="max-width:1480px;margin:0 auto;"></div>
+
+  <script type="module">
+    import { iniciarAppTriagem } from './src/ui/app.js';
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        iniciarAppTriagem(document.getElementById('app'));
+      });
+    } else {
+      iniciarAppTriagem(document.getElementById('app'));
+    }
+  </script>
+</body>
+</html>

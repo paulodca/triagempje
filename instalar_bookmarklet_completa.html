@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instalar — Triagem Completa</title>
+<style>
+  :root {
+    --primary: #1e3a8a;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --accent-blue: #2563eb;
+    --accent-border: #bfdbfe;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.05);
+    --shadow-md: 0 4px 10px -2px rgba(15,23,42,0.07), 0 2px 4px -2px rgba(15,23,42,0.04);
+    --space-2xs: 0.5rem;
+    --space-xs: 0.75rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 120ms;
+    --dur-base: 180ms;
+  }
+  * { box-sizing: border-box; }
+  :focus-visible { outline: 2px solid var(--primary-hover); outline-offset: 2px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 640px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    color: var(--gray-800);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+  h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; color: var(--gray-900); }
+  h2 { font-size: 1.02rem; font-weight: 700; margin: var(--space-lg) 0 var(--space-2xs); color: var(--gray-900); }
+  .bookmarklet-container {
+    background: var(--gray-50);
+    border: 2px dashed var(--gray-400);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    text-align: center;
+    margin: var(--space-sm) 0;
+  }
+  .bookmarklet-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 13px 28px;
+    background: var(--primary);
+    color: white;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.02rem;
+    cursor: grab;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
+    transition: background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+  }
+  .bookmarklet-btn:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); }
+  .bookmarklet-btn:active { cursor: grabbing; }
+  .drag-hint {
+    margin-top: var(--space-xs);
+    font-size: 0.88rem;
+    color: var(--gray-600);
+  }
+  code { background: var(--gray-100); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+  /* Cards de passo numerados, mesmo padrão de triagem_fazenda_publica.html */
+  .grid-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: var(--space-sm);
+    margin: var(--space-sm) 0;
+  }
+  .step-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: var(--space-md) var(--space-sm);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-card-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    margin-bottom: var(--space-2xs);
+  }
+  .step-card-title { font-weight: 700; font-size: 0.94rem; margin-bottom: 0.25rem; color: var(--gray-900); }
+  .step-card-desc { font-size: 0.82rem; color: var(--gray-600); line-height: 1.45; }
+
+  .next-step-box {
+    background: var(--primary-light);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    text-align: center;
+    margin: var(--space-lg) 0 var(--space-sm);
+  }
+  .btn-proximo {
+    display: inline-block;
+    padding: 11px 26px;
+    background: var(--accent-blue);
+    color: white;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  }
+  .btn-proximo:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .btn-proximo:active { transform: translateY(0); }
+  .next-step-box .sub { margin-top: var(--space-xs); font-size: 0.85rem; color: var(--gray-600); }
+</style>
+</head>
+<body>
+
+<h1>Instalar: Triagem Completa (processo + partes + assuntos)</h1>
+<p>Arraste o botão abaixo para a barra de favoritos do navegador (não clique — arraste).</p>
+
+<div class="bookmarklet-container">
+  <a class="bookmarklet-btn" id="bookmarkletLink" title="Triagem Completa"
+     href="javascript:(function%20()%20%7B%20const%20AGRUPAMENTO%20%3D%2012%3B%20const%20TAMANHO_PAGINA%20%3D%20500%3B%20const%20CONCORRENCIA%20%3D%205%3B%20const%20API_BASE%20%3D%20%60%24%7Blocation.origin%7D%2Fpje-comum-api%2Fapi%60%3B%20function%20getCookie(name)%20%7B%20const%20cookies%20%3D%20document.cookie.split('%3B')%3B%20for%20(let%20i%20%3D%200%3B%20i%20%3C%20cookies.length%3B%20i%2B%2B)%20%7B%20const%20c%20%3D%20cookies%5Bi%5D.trim()%3B%20if%20(c.startsWith(name%20%2B%20'%3D'))%20%7B%20return%20decodeURIComponent(c.substring(name.length%20%2B%201))%3B%20%7D%20%7D%20return%20null%3B%20%7D%20function%20criarAviso()%20%7B%20const%20div%20%3D%20document.createElement('div')%3B%20div.id%20%3D%20'triagem-completa-aviso'%3B%20div.style.cssText%20%3D%20%5B%20'position%3Afixed'%2C%20'top%3A16px'%2C%20'right%3A16px'%2C%20'z-index%3A999999'%2C%20'background%3A%230f172a'%2C%20'color%3A%23fff'%2C%20'padding%3A14px%2020px'%2C%20'border-radius%3A10px'%2C%20'font%3A14px%2F1.5%20system-ui%2Csans-serif'%2C%20'box-shadow%3A0%208px%2024px%20rgba(0%2C0%2C0%2C.35)'%2C%20'max-width%3A320px'%20%5D.join('%3B')%3B%20div.innerHTML%20%3D%20'%3Cdiv%20style%3D%22font-weight%3A700%3Bmargin-bottom%3A4px%22%3EN%C3%83O%20FECHE%20ESTA%20ABA%3C%2Fdiv%3E'%20%2B%20'%3Cdiv%20id%3D%22triagem-completa-status%22%20style%3D%22font-size%3A13px%3Bopacity%3A.9%22%3EIniciando...%3C%2Fdiv%3E'%3B%20document.body.appendChild(div)%3B%20return%20div%3B%20%7D%20function%20status(div%2C%20texto)%20%7B%20div.querySelector('%23triagem-completa-status').textContent%20%3D%20texto%3B%20%7D%20function%20sanitizarParte(p)%20%7B%20if%20(!p%20%7C%7C%20typeof%20p%20!%3D%3D%20'object')%20return%20p%3B%20const%20c%20%3D%20Object.assign(%7B%7D%2C%20p)%3B%20delete%20c.emails%3B%20delete%20c.email%3B%20delete%20c.cpf%3B%20delete%20c.dddCelular%3B%20delete%20c.numeroCelular%3B%20if%20(c.tipoDocumento%20%3D%3D%3D%20'CPF')%20delete%20c.documento%3B%20if%20(c.pessoaFisica)%20%7B%20const%20pf%20%3D%20Object.assign(%7B%7D%2C%20c.pessoaFisica)%3B%20delete%20pf.login%3B%20delete%20pf.cpf%3B%20delete%20pf.dataNascimento%3B%20delete%20pf.nomeGenitora%3B%20delete%20pf.nomeGenitor%3B%20c.pessoaFisica%20%3D%20pf%3B%20%7D%20if%20(Array.isArray(c.representantes))%20%7B%20c.representantes%20%3D%20c.representantes.map(r%20%3D%3E%20%7B%20const%20rep%20%3D%20Object.assign(%7B%7D%2C%20r)%3B%20delete%20rep.cpf%3B%20delete%20rep.documento%3B%20delete%20rep.emails%3B%20delete%20rep.email%3B%20delete%20rep.dddCelular%3B%20delete%20rep.numeroCelular%3B%20return%20rep%3B%20%7D)%3B%20%7D%20return%20c%3B%20%7D%20function%20sanitizarPartesDict(partesDict)%20%7B%20if%20(!partesDict%20%7C%7C%20typeof%20partesDict%20!%3D%3D%20'object')%20return%20partesDict%3B%20const%20out%20%3D%20%7B%7D%3B%20for%20(const%20polo%20of%20Object.keys(partesDict))%20%7B%20out%5Bpolo%5D%20%3D%20(partesDict%5Bpolo%5D%20%7C%7C%20%5B%5D).map(sanitizarParte)%3B%20%7D%20return%20out%3B%20%7D%20function%20baixarTxt(nomeArquivo%2C%20linhasObjeto)%20%7B%20const%20texto%20%3D%20linhasObjeto.map(o%20%3D%3E%20JSON.stringify(o)).join('%5Cn')%20%2B%20'%5Cn'%3B%20const%20a%20%3D%20document.createElement('a')%3B%20a.href%20%3D%20URL.createObjectURL(new%20Blob(%5Btexto%5D%2C%20%7B%20type%3A%20'text%2Fplain%3Bcharset%3Dutf-8'%20%7D))%3B%20a.download%20%3D%20nomeArquivo%3B%20a.click()%3B%20%7D%20async%20function%20buscarPaginaTriagem(pagina%2C%20xsrf)%20%7B%20const%20res%20%3D%20await%20fetch(%20%60%24%7BAPI_BASE%7D%2Fagrupamentotarefas%2F%24%7BAGRUPAMENTO%7D%2Fprocessos%60%2C%20%7B%20method%3A%20'PATCH'%2C%20credentials%3A%20'include'%2C%20headers%3A%20%7B%20'Content-Type'%3A%20'application%2Fjson'%2C%20'X-XSRF-TOKEN'%3A%20xsrf%20%7D%2C%20body%3A%20JSON.stringify(%7B%20pagina%2C%20tamanhoPagina%3A%20TAMANHO_PAGINA%2C%20subCaixa%3A%20null%2C%20tipoAtividade%3A%20null%2C%20processos%3A%20null%2C%20nomeConclusoMagistrado%3A%20null%2C%20usuarioResponsavel%3A%20null%2C%20faseProcessualString%3A%20null%2C%20numeroProcesso%3A%20null%2C%20juizoDigital%3A%20false%2C%20filtroImpedimento%3A%20false%2C%20ordenacaoColuna%3A%20null%2C%20condicaoNegativaNosItensSelecionados%3A%20false%2C%20expedientesPreparados%3A%20false%2C%20ordenacaoCrescente%3A%20true%2C%20filtrarPorResponsavel%3A%20false%20%7D)%20%7D%20)%3B%20if%20(!res.ok)%20throw%20new%20Error('Falha%20ao%20listar%20triagem%20(p%C3%A1gina%20'%20%2B%20pagina%20%2B%20')%3A%20HTTP%20'%20%2B%20res.status)%3B%20return%20res.json()%3B%20%7D%20async%20function%20getJson(caminho%2C%20xsrf)%20%7B%20const%20res%20%3D%20await%20fetch(%60%24%7BAPI_BASE%7D%24%7Bcaminho%7D%60%2C%20%7B%20credentials%3A%20'include'%2C%20headers%3A%20%7B%20'X-XSRF-TOKEN'%3A%20xsrf%20%7D%20%7D)%3B%20if%20(!res.ok)%20throw%20new%20Error('HTTP%20'%20%2B%20res.status%20%2B%20'%20em%20'%20%2B%20caminho)%3B%20return%20res.json()%3B%20%7D%20async%20function%20buscarDetalhesProcesso(idProcesso%2C%20xsrf)%20%7B%20const%20%5Bprocesso%2C%20partesBrutas%2C%20assuntos%5D%20%3D%20await%20Promise.all(%5B%20getJson(%60%2Fprocessos%2Fid%2F%24%7BidProcesso%7D%60%2C%20xsrf)%2C%20getJson(%60%2Fprocessos%2Fid%2F%24%7BidProcesso%7D%2Fpartes%60%2C%20xsrf)%2C%20getJson(%60%2Fprocessos%2Fid%2F%24%7BidProcesso%7D%2Fassuntos%60%2C%20xsrf)%20%5D)%3B%20return%20%7B%20processo%2C%20partes%3A%20sanitizarPartesDict(partesBrutas)%2C%20assuntos%20%7D%3B%20%7D%20async%20function%20executarEmParalelo(itens%2C%20limite%2C%20fn)%20%7B%20let%20index%20%3D%200%3B%20const%20total%20%3D%20itens.length%3B%20async%20function%20worker()%20%7B%20while%20(index%20%3C%20total)%20%7B%20const%20i%20%3D%20index%2B%2B%3B%20await%20fn(itens%5Bi%5D%2C%20i%2C%20total)%3B%20%7D%20%7D%20const%20workers%20%3D%20Array.from(%7B%20length%3A%20Math.min(limite%2C%20total)%20%7D%2C%20()%20%3D%3E%20worker())%3B%20await%20Promise.all(workers)%3B%20%7D%20async%20function%20main()%20%7B%20const%20aviso%20%3D%20criarAviso()%3B%20try%20%7B%20const%20xsrf%20%3D%20getCookie('Xsrf-Token')%3B%20if%20(!xsrf)%20throw%20new%20Error('Cookie%20Xsrf-Token%20n%C3%A3o%20encontrado.%20Est%C3%A1%20logado%20no%20PJe%20nesta%20aba%3F')%3B%20status(aviso%2C%20'Buscando%20lista%20de%20processos%20em%20triagem...')%3B%20let%20pagina%20%3D%201%3B%20let%20todos%20%3D%20%5B%5D%3B%20let%20primeira%20%3D%20await%20buscarPaginaTriagem(pagina%2C%20xsrf)%3B%20todos%20%3D%20todos.concat(primeira.resultado)%3B%20while%20(pagina%20%3C%20primeira.qtdPaginas)%20%7B%20pagina%20%2B%3D%201%3B%20const%20prox%20%3D%20await%20buscarPaginaTriagem(pagina%2C%20xsrf)%3B%20todos%20%3D%20todos.concat(prox.resultado)%3B%20%7D%20const%20semResponsavel%20%3D%20todos.filter(p%20%3D%3E%20!p.idUsuarioResponsavelSecretaria)%3B%20const%20out%20%3D%20new%20Array(semResponsavel.length)%3B%20let%20concluidos%20%3D%200%3B%20let%20falhas%20%3D%200%3B%20await%20executarEmParalelo(semResponsavel%2C%20CONCORRENCIA%2C%20async%20(p%2C%20i%2C%20total)%20%3D%3E%20%7B%20try%20%7B%20const%20%7B%20processo%2C%20partes%2C%20assuntos%20%7D%20%3D%20await%20buscarDetalhesProcesso(p.id%2C%20xsrf)%3B%20out%5Bi%5D%20%3D%20%7B%20cnj%3A%20p.numeroProcesso%2C%20idProcesso%3A%20p.id%2C%20listagem%3A%20p%2C%20processo%2C%20partes%2C%20assuntos%20%7D%3B%20%7D%20catch%20(e)%20%7B%20falhas%2B%2B%3B%20out%5Bi%5D%20%3D%20%7B%20cnj%3A%20p.numeroProcesso%2C%20idProcesso%3A%20p.id%2C%20erro%3A%20String(e%20%26%26%20e.message%20%7C%7C%20e)%20%7D%3B%20%7D%20concluidos%2B%2B%3B%20const%20pct%20%3D%20Math.round((concluidos%20%2F%20total)%20*%20100)%3B%20status(aviso%2C%20%60Baixando%20e%20sanitizando%3A%20%24%7Bconcluidos%7D%2F%24%7Btotal%7D%20(%24%7Bpct%7D%25)%60)%3B%20%7D)%3B%20const%20outValidos%20%3D%20out.filter(Boolean)%3B%20const%20hoje%20%3D%20new%20Date().toISOString().slice(0%2C%2010)%3B%20baixarTxt(%60triagem_completa_%24%7Bhoje%7D.txt%60%2C%20outValidos)%3B%20status(%20aviso%2C%20%60Conclu%C3%ADdo!%20%24%7BoutValidos.length%7D%20processos%20sanitizados%20(sem%20CPF%2Fe-mails)%60%20%2B%20(falhas%20%3F%20%60%2C%20%24%7Bfalhas%7D%20falhas%60%20%3A%20'')%20%2B%20'.%20Arquivo%20.txt%20baixado.'%20)%3B%20setTimeout(()%20%3D%3E%20aviso.remove()%2C%2010000)%3B%20%7D%20catch%20(err)%20%7B%20status(aviso%2C%20'Erro%3A%20'%20%2B%20err.message)%3B%20setTimeout(()%20%3D%3E%20aviso.remove()%2C%2012000)%3B%20%7D%20%7D%20main()%3B%20%7D)()%3B">Triagem Completa</a>
+  <div class="drag-hint">Arraste o botão para a sua barra de favoritos</div>
+</div>
+
+<p>Se a barra de favoritos estiver escondida: <code>Ctrl+Shift+B</code>.</p>
+
+<h2>Como coletar</h2>
+<div class="grid-steps">
+  <div class="step-card">
+    <div class="step-card-num">1</div>
+    <div class="step-card-title">Abra o PJe</div>
+    <div class="step-card-desc">Entre no PJe TRT-2 logado. Pode ficar em qualquer tela.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-num">2</div>
+    <div class="step-card-title">Clique no favorito</div>
+    <div class="step-card-desc">Clique no botão <b>Triagem Completa</b> que você instalou na barra de favoritos.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-num">3</div>
+    <div class="step-card-title">Aguarde</div>
+    <div class="step-card-desc">Um aviso <b>NÃO FECHE ESTA ABA</b> aparece no canto da tela com o progresso ao vivo (<code>Baixando detalhes: X/Y</code>) enquanto o bookmarklet roda.</div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-card-num">4</div>
+    <div class="step-card-title">Arquivo baixado</div>
+    <div class="step-card-desc">Ao concluir, o arquivo <code>triagem_completa_AAAA-MM-DD.txt</code> cai direto na pasta Downloads.</div>
+  </div>
+</div>
+
+<div class="next-step-box">
+  <a class="btn-proximo" href="triagem_completa.html">Abrir a ferramenta de triagem</a>
+  <div class="sub">Com o arquivo .txt em mãos, carregue-o na ferramenta de triagem para explorar os processos.</div>
+</div>
+
+<script>
+// Compatibilidade de Drag-and-Drop do Favorito no Firefox e outros navegadores
+const bookmarkletLink = document.getElementById('bookmarkletLink');
+bookmarkletLink.addEventListener('dragstart', (e) => {
+  const url = bookmarkletLink.href;
+  const title = 'Triagem Completa';
+  if (e.dataTransfer) {
+    e.dataTransfer.setData('text/x-moz-url', `${url}\n${title}`);
+    e.dataTransfer.setData('text/uri-list', url);
+    e.dataTransfer.setData('text/plain', url);
+  }
+});
+</script>
+
+</body>
+</html>

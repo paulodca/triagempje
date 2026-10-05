@@ -1,0 +1,42 @@
+﻿# ==============================================================================
+# .gitignore — Triagem PJe (Repositorio Publico GitHub Pages)
+# ==============================================================================
+
+# Relatorios internos, formularios e notas de pesquisa/gabinete
+RELATORIO_*
+FORMULARIO_*
+HANDOFF.md
+projeto_triagem_completa_HANDOFF.md
+pesquisa_endpoint.md
+CHANGELOG.md
+documentos_formulario/
+
+# Scripts de bancada, testes e regressao interna
+scripts/
+tests/
+teste_regressao_*.mjs
+build.mjs
+src/dados/*.mjs
+src/coleta/*.mjs
+
+# Dumps, dados reais e arquivos temporarios de teste
+*.txt
+*.htm
+scratch_*
+triagem_copy.json
+triagem_completa_*.txt
+saida_triagem_*.json
+dump_resposta_*.json
+
+# Pastas de build descartaveis
+dist/
+
+# Bookmarklets avulsos de bancada (ja integrados no app)
+exportar_triagem_*.bookmarklet.js
+triagem_fazenda_publica.html
+
+# Sistema Operacional e Editores
+desktop.ini
+Thumbs.db
+.DS_Store
+*.log
